@@ -1,0 +1,77 @@
+{
+  "info": {
+    "_postman_id": "4b68e68a-13d4-4c26-994b-12e6c0ba12ef",
+    "name": "Backend API Collection",
+    "description": "Postman collection for testing the Backend API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "fullName",
+                  "value": "John Doe",
+                  "description": "Full name of the user",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "johndoe@example.com",
+                  "description": "Email address of the user",
+                  "type": "text"
+                },
+                {
+                  "key": "userName",
+                  "value": "johndoe",
+                  "description": "Unique username",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "SecurePassword123",
+                  "description": "User password",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "description": "Avatar image file (Required)",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "coverImage",
+                  "description": "Cover image file (Optional)",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "register"
+              ]
+            },
+            "description": "Register a new user in the system with their details, profile avatar, and optional cover image."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
