@@ -1,11 +1,7 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware.js"
-import { 
-    healthCheck 
-} from "../controllers/healthcheck.controller.js"
+import { healthCheck } from "../controllers/healthCheck.controller.js";
 
-const router = Router()
+const router = Router();
+router.route("/").get(healthCheck);
 
-router.route("/").get(healthCheck)
-
-export default router
+export default router;
