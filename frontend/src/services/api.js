@@ -7,7 +7,7 @@ const api = createApi({
     reducerPath: "api",
 
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:4000/api/v1",
+        baseUrl: `${import.meta.env.VITE_API_URL}/api/v1`,
         credentials: "include"
     }),
     tagTypes: ["Playlist", "Video", "User", "Comment", "Like", "Subscription", "Tweet"],
