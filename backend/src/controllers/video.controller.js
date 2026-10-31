@@ -177,9 +177,9 @@ const publishAVideo = asyncHandler(async(req, res) => {
     const video = await Video.create({
         title,
         description,
-        videoFile : videoFile.url,
+        videoFile : videoFile.secure_url,
         videoPublicId: videoFile.public_id,
-        thumbnail : thumbnailFile.url,
+        thumbnail : thumbnailFile.secure_url,
         thumbnailPublicId: thumbnailFile.public_id,
         owner: req.user?._id,
         duration : videoFile.duration,
@@ -361,7 +361,7 @@ const updateVideo = asyncHandler(async(req, res) => {
         if(!thumbnailDelete){
             throw new ApiError(500, "failed to delete thumbnail from the cloudinary")
         }
-        video.thumbnail = thumbnailFile.url
+        video.thumbnail = thumbnailFile.secure_url
         video.thumbnailPublicId = thumbnailFile.public_id
     }
     await video.save()

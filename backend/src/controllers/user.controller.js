@@ -68,8 +68,8 @@ const registerUser = asyncHandler(async (req, res) => {
         password,
         email,
         fullName,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || "",
+        avatar: avatar.secure_url,
+        coverImage: coverImage?.secure_url || "",
         avatarPublicId: avatar.public_id,
         coverImagePublicId: coverImage?.public_id || ""
     })
@@ -115,15 +115,8 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   )
 
-  const options = {
-  httpOnly: true,
-  secure: true,
-  sameSite: "none",
-  path: "/",
-  }
-
-  return res.status(200).cookie("accessToken", accessToken, options)
-  .cookie("refreshToken", refreshToken, options)
+  return res.status(200).cookie("accessToken", accessToken, cookieOptions)
+  .cookie("refreshToken", refreshToken, cookieOptions)
   .json(
     new ApiResponse(200,
         {   
@@ -148,14 +141,9 @@ const logoutUser = asyncHandler(async (req, res) => {
         }
     )
 
-    const options = {
-      httpOnly : true,
-      secure : true
-    }
-
     return res.status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
     .json(
     new ApiResponse(200, {},
         "User logged out successfully"
@@ -165,7 +153,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 const refreshAccessToken = asyncHandler(async(req, res) => {
-const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken   
+const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken   
    
    if(!incomingRefreshToken) {
     throw new ApiError(401, "unautorized request")
@@ -186,15 +174,9 @@ const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
 
   const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
 
-
-  const options = {
-    httpOnly: true,
-    secure: true
-  }
-
   return res.status(200)
-  .cookie("accessToken", accessToken, options)
-  .cookie("refreshToken", refreshToken, options)
+  .cookie("accessToken", accessToken, cookieOptions)
+  .cookie("refreshToken", refreshToken, cookieOptions)
   .json(
     new ApiResponse(
         200,
@@ -291,7 +273,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
 
-    if(!avatar.url) {
+    if(!avatar.secure_url) {
         throw new ApiError (500,"The file couldn't update on the cloudinary")
     }
     
@@ -303,7 +285,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
  
     const userUpdated = await User.findByIdAndUpdate(req.user?._id, {
         $set:{
-            avatar: avatar.url,
+            avatar: avatar.secure_url,
             avatarPublicId: avatar.public_id
         }
     },{
@@ -325,7 +307,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
-    if(!coverImage.url){
+    if(!coverImage.secure_url){
         throw new ApiError(500, "coverImage update is failed")
     }
     const user = await User.findById(req.user?._id)
@@ -336,7 +318,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
     const userUpdated = await User.findByIdAndUpdate(req.user?._id,{
         $set:{
-            coverImage: coverImage.url,
+            coverImage: coverImage.secure_url,
             coverImagePublicId: coverImage.public_id
         }
     }, {
