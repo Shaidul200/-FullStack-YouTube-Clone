@@ -115,42 +115,42 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   )
 
-  return res.status(200).cookie("accessToken", accessToken, cookieOptions)
-  .cookie("refreshToken", refreshToken, cookieOptions)
-  .json(
-    new ApiResponse(200,
-        {   
-            accessToken,
-            refreshToken,
-            user: loggedInUser
-        },
-        "User logged in successfully"
-     )
-  )
-  
+  const options = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  }
+
+  return res.status(200).cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", refreshToken, options)
 })
 
-const logoutUser = asyncHandler(async (req, res) => {
-
-    await User.findByIdAndUpdate(req.user._id,
+const logoutUser = asyncHandler(async(req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
         {
-          $unset : {refreshToken : 1}
+            $unset: {
+                refreshToken: 1  // this removes the field from document
+            }
         },
         {
             new: true
         }
     )
 
-    return res.status(200)
-    .clearCookie("accessToken", cookieOptions)
-    .clearCookie("refreshToken", cookieOptions)
-    .json(
-    new ApiResponse(200, {},
-        "User logged out successfully"
-    )
- )
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
 
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged Out"))
 })
+
 
 const refreshAccessToken = asyncHandler(async(req, res) => {
 const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken   
@@ -175,8 +175,13 @@ const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken
   const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
 
   return res.status(200)
-  .cookie("accessToken", accessToken, cookieOptions)
-  .cookie("refreshToken", refreshToken, cookieOptions)
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+  return res.status(200)
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", refreshToken, options)
   .json(
     new ApiResponse(
         200,
